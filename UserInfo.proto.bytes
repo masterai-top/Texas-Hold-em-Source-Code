@@ -1,0 +1,286 @@
+syntax = "proto3";
+
+option cc_generic_services=false;
+
+package UserInfoProto;
+
+// 获取用户详情
+message GetUserDetailReq
+{
+	sint64 uid = 1;   //用户id
+}
+
+message GetUserDetailResp
+{
+	sint64 uid            = 1;  //用户id
+	sint32 gender         = 2;  //用户性别0:未知,1:男,2:女
+	string name           = 3;  //用户名称
+	string head           = 4;  //用户头像
+	sint32 isBindRealName = 5;  //是否实名认证，0否，1是
+	sint32 isBindAgent    = 6;  //是否绑定代理，0否，1是
+	sint32 agentId        = 7;  //代理id，0非代理，其他则为代理id
+	string registerTime   = 8;  //注册时间，格式为 yyyy-MM-dd
+	sint32 belongAgentId  = 9;  //所属代理id
+	string signature      = 10; //用户签名
+	sint32 areaID         = 11; //玩家标识
+}
+
+message GetUserIdReq
+{
+	sint64 showUid = 1;  //显示id
+}
+
+message GetUserIdResp
+{
+	sint64 showUid = 1;  //显示id
+	sint64 uid = 2;  //用户id
+}
+
+// 获取用户基本信息
+message GetUserBasicReq
+{
+	sint64 uid = 1;  //用户id
+}
+
+message GetUserBasicResp
+{
+	sint32 resultCode      = 1; //结果码
+	sint32 gender          = 2; //用户性别, 0:未知,1:男,2:女
+	string name            = 3; //用户名称
+	string head            = 4; //用户头像
+	string signature       = 5; //用户签名
+	bool   online	       = 6; //是否在线
+	bool   isCertification = 7; //是否实名认证
+	sint32 banInvite       = 8; //禁止邀请: 0-否,1-是
+	sint32 banFriend       = 9; //禁止添加好友: 0-否,1-是
+	sint32 areaCode        = 10;//用户所属区域ID
+	sint32 offlineTime     = 11;//用户已离线秒数,用户离线时才有效
+	sint32 lastLoginTime   = 12;//最近登录时间
+	sint32 isNovice        = 13;//用户是否在新手期: 0-否,1-是
+	sint32 regTime         = 14;//注册时间戳
+	string mobile          = 15;//手机号码
+	sint32 hasExchangePwd  = 16;//是否设置过兑换密码: 0-否,1-是
+	sint32 bindThirdParty  = 17;//是否绑定第三方账号: 0-否,1-是
+	sint32 bNewHandReward  = 18;//是否领取新手奖励 0：否  1：是
+	sint32 aiPoint		   = 19;
+	sint32 aiGameRound	   = 20;
+	sint64 showUid 		   = 21; //虚假uid
+	bool isRobot		   = 22; //是否是机器人
+}
+
+message ListUserByNameReq
+{
+	string nickname = 1; //用户昵称
+}
+
+// 响应ListUserBasicResp
+
+
+// 批量获取用户基本信息
+message ListUserBasicReq
+{
+	repeated sint64 uidList = 1;  //用户id列表
+	sint32 type = 2; 	//1:  我的好友   2：添加好友   3： 好友审批
+}
+
+message ListUserBasicResp
+{
+	sint32 resultCode = 1;  //结果码
+	map<sint64, GetUserBasicResp> basicList = 2;  //用户基本信息列表
+	sint32 type = 3; 	//1:  我的好友   2：添加好友   3： 好友审批
+}
+
+// 获取用户账户
+message GetUserAccountReq
+{
+	sint64 uid = 1;   //用户id
+}
+
+message GetUserAccountResp
+{
+	sint32 resultCode  = 1;  //结果码
+	sint64 roomCard    = 2;  //房卡
+	sint64 diamond     = 3;  //钻石
+	sint64 gold        = 4;  //金币(筹码)
+	sint64 safeGold    = 5;  //保险箱金币
+	sint64 score       = 6;  //赛事积分
+	sint64 ticketNum   = 7;  //票券数量
+	sint64 payPoint    = 8;  //充值积分
+	sint64 rewardPoint = 9;  //奖励积分
+	sint32 level       = 10; //等级
+	sint32 experience  = 11; //经验
+}
+
+// 批量获取用户账户信息
+message ListGetUserAccountReq
+{
+	repeated sint64 uidList = 1;  //用户id列表
+}
+
+message ListGetUserAccountResp
+{
+	sint32 resultCode = 1;  //结果码
+	map<sint64, GetUserAccountResp> accountList = 2;//用户账户信息列表
+}
+
+// 更新用户信息
+message UpdateUserInfoReq
+{
+	string nickname = 1;  	//昵称
+	sint32 head_id = 2;  	//头像id
+	string head_url = 3; 	//头像url
+	sint32 gender = 4; 		//性别
+	string signature = 5; 	//签名
+}
+
+message UpdateUserInfoResp
+{
+	sint32 resultCode = 1;  //结果码
+}
+
+// 修改用户个人信息
+message ModifyUserBasicReq
+{
+	sint32 uid   = 1; //用户id
+	sint32 type  = 2; //1.性别 2.昵称 3.头像 4.签名
+	string value = 3; //用户性别, 0:未知,1:男,2:女
+}
+
+message ModifyUserBasicResp
+{
+	sint32 resultCode = 1;  //结果码
+}
+
+// 获取随机昵称请求
+message ListNickNameRandomReq
+{
+	sint32 count = 1;   //数量
+}
+
+// 获取随机昵称应答
+message ListNickNameRandomResp
+{
+	sint32 resultCode = 1;  //结果码
+	repeated string nickname = 2;  //随机昵称
+}
+
+// 获取用户奖励信息
+message GetUserRewardReq
+{
+	sint64 uid = 1;  //用户id
+}
+
+message GetUserRewardResp
+{
+	message RewardItem
+	{
+		sint32 type 		   = 1; //1：比赛奖励  2：任务奖励
+		sint32 props_id        = 2; //道具ID 10000： 积分   20000：奖励积分  30000：挑战积券  40000：挑站积分
+		sint32 number          = 3; //获奖数量
+		string roomName		   = 4;
+		string param      	   = 5; //比赛排名或者任务名称
+		sint32 reward_time     = 6;
+	}
+	sint32 resultCode	   = 1;
+	sint64 uid 			   = 2;  //用户id
+	repeated RewardItem item = 3;
+}
+
+// 修改用户设置
+message ModifyUserSettingReq
+{
+	sint64 uid       = 1; //用户id
+	sint32 banInvite = 2; //禁止邀请: 0-否,1-是
+	sint32 banFriend = 3; //禁止添加好友: 0-否,1-是
+}
+
+message ModifySettingResp
+{
+	sint32 resultCode = 1; //结果码
+}
+
+enum E_SEASON_TYPE
+{
+    E_SEASON_NONE    = 0; //默认值--无效
+    E_SEASON_NOW     = 1; //当前赛季
+    E_SEASON_LAST    = 2; //上次赛季
+}
+
+// 获取用户赛季信息
+message GetUserSeasonInfoReq
+{
+	E_SEASON_TYPE type = 1;//赛季类型,参考E_SEASON_TYPE
+	sint64 uid         = 2;//用户id
+}
+
+message GetUserSeasonInfoResp
+{
+	E_SEASON_TYPE type =  1; //赛季类型,参考E_SEASON_TYPE
+	sint32 resultCode  =  2; //结果码
+	sint32 season      =  3; //赛季唯一ID
+	sint32 cfgId       =  4; //赛季配置ID
+	sint32 rank        =  5; //赛季排名,前1000名才有效
+	sint32 grade       =  6; //段位
+	sint32 classes     =  7; //阶级
+	sint32 star        =  8; //星数
+	sint32 integral    =  9; //积分
+	sint32 areaId      = 10; //玩家所属区域ID
+	sint32 maxGrade    = 11; //赛季最大段位
+	sint64 uid         = 12; //用户id
+	sint32 rankUserNum = 13; //赛季排名人数,最多支持1000人
+}
+
+// 绑定手机号
+message BindPhoneReq
+{
+    string phone = 1;  //手机号
+    string code  = 2;  //手机验证码
+}
+
+message BindPhoneResp
+{
+    sint32 resultCode = 1; //结果码
+}
+
+// 修改兑换登录密码
+message ModifyExchangePwdReq
+{
+	sint32 type   = 1; //类型:1-设置密码,2-修改密码,3-重置密码(或忘记密码)
+	string newPwd = 2; //新密码
+	string oldPwd = 3; //旧密码,类型为修改密码时才有效
+	string phone  = 4; //手机号,类型为重置密码时才有效
+	string code   = 5; //手机验证码,类型为重置密码时才有效
+}
+
+message ModifyExchangePwdResp
+{
+	sint32 resultCode = 1; //结果码
+}
+
+
+//新手奖励 HALL_NEWHAND_REWARD_LIST
+message NewHandRewardList
+{
+	message NewHandRewardInfo
+	{
+		string roomID =1; //房间号
+		bool bNewHand = 2; //是否新手
+		bool bReceive = 3; // 是否领取
+		sint32 lRewardNum = 4; //新手奖励数
+	}
+	repeated NewHandRewardInfo info = 1;
+}
+
+//新手奖励操作 HALL_NEWHAND_OPTION
+message NewHandGuideReq
+{
+	sint32 iOptionType = 1; // 1: 新手引导  2: 领取奖励
+	string roomID =2; //房间号
+}
+
+message NewHandGuideResp
+{
+	sint32 iResultID = 1;
+	sint32 iOptionType = 2; // 1: 新手引导  2: 领取奖励
+	string roomID =3; //房间号
+}

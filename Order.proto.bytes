@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+option cc_generic_services=false;
+
+package orderProto;
+
+// 支付
+enum Eum_Channel_Type
+{
+    E_CHANNEL_DEFAULT       = 0;
+    E_CHANNEL_IOS           = 1;
+    E_CHANNEL_GOOGLEPLAY    = 2;
+}
+
+enum Eum_Purchase_Type
+{
+    E_PURCHASE_NONE         = 0;
+    E_PURCHASE_GOLD         = 1;
+    E_PURCHASE_INTEGRAL     = 2;
+    E_PURCHASE_PIG          = 3;
+    E_PURCHASE_LUCKPACK     = 4;
+    E_PURCHASE_SPECIALPACK  = 5;
+}
+
+// 请求URL和方法以及参数在服务器生成
+message OrderYieldReq
+{
+    Eum_Channel_Type  type              = 1;
+    bool              isSandBox         = 2;
+    string            product_id        = 3;
+    int32               qrCode          = 4;// 商品二维码
+    string            google_order_num  = 5;// google的订单号== 只有google使用
+}
+message OrderYieldResp
+{
+    string orderNum                 = 1;
+    sint32 resultCode               = 2;
+    Eum_Channel_Type  type          = 3;
+    string            product_id    = 4;
+}
+
+message OrderVerifyReq
+{
+    string          orderNum    = 1;
+    string          credential  = 2;// JSON 格式
+    string          transaction_id = 3; //交易ID ---仅IOS使用
+    // credential 格式
+    //GooglePlay 
+    //{ "packageName" : "dz_2019",
+    //  "productId" : "ID",
+    //  "token": "dddzz"
+    //}
+
+    // IOS ==我会把该JSON串原样请求IOS
+    //{
+    //    "receipt-data": "dddzz"
+    //}
+}
+
+
+
+message OrderVerifyResp
+{
+    sint32 resultCode           = 1;
+    string identity             = 2;    //  IOS:    返回订单号   GOOGLE:返回订单token
+    string json                 = 3;    //  type :  交易类型   == GOOGLE 放到第三步骤
+                                        //  data :  额外数据 ---上限/金币或者钻石数量
+    Eum_Channel_Type  type      = 4;
+}
+
+
+message ConsumptionVerifyReq
+{
+    string          orderNum    = 1; // 服务器产生的订单号
+}
+
+message ConsumptionVerifyResp
+{
+    sint32 resultCode   = 1;
+    string orderNum     = 2;
+    string json         = 3;        //  type :  交易类型
+                                    //  data :  额外数据 ---上限/金币或者钻石数量
+}

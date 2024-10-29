@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+option cc_generic_services=false;
+
+package mallProto;
+
+enum E_PLATFORM_TYPE
+{
+    E_PLATFORM_NONE     = 0;
+    E_PLATFORM_IOS      = 1; //ios
+    E_PLATFORM_ANDROID  = 2; //安卓
+}
+
+
+enum E_MENU_TYPE
+{
+    E_MENU_TYPE_NONE           = 0;
+    E_MENU_TYPE_GOLD_CHARGE    = 1;//金币购买
+    E_MENU_TYPE_DIAMOND_CHARGE = 2;//钻石购买
+    E_MENU_TYPE_SCORE_HARGE    = 3;//充值积分
+    E_MENU_TYPE_LUCKPACK       = 4;//幸运礼包
+    E_MENU_TYPE_SPECIALPACK    = 5;//特惠礼包
+    E_MENU_TYPE_RECHARGE       = 6;//充值活动
+    E_MENU_TYPE_EXPRESSION     = 7;//表情包
+}
+
+message GetMenuReq
+{
+    E_PLATFORM_TYPE platform    = 1;
+    E_MENU_TYPE     type        = 2;
+}
+
+message GoodsGroup
+{
+    sint32 GoodsID     = 1;
+    double GoodsCount  = 2;
+}
+
+message GoodsDetail
+{
+    repeated GoodsGroup exchanges = 1;//道具组合
+    double consumeGoodsCount      = 2;//物品数量
+    sint32 consumeGoodsID         = 3;//物品ID
+    sint32 QRCode                 = 4;//商品ID
+    string product_id             = 5;//充值商品ID
+    string icon                   = 6;//商品图标
+    string discount               = 7;//优惠百分比
+    sint32 hot                    = 8;//商品热度:0-否,1-是
+}
+
+message GetMenuResp
+{
+    sint32 resultCode               = 1;//返回码
+    map<sint32, GoodsDetail>  goodsList  = 2;
+    E_MENU_TYPE               menuType = 3;
+}
+
+message GoodsBuyReq
+{
+    sint32          QRCode   = 1;//商品二维码
+    sint32          count    = 2;//购买的数量
+    E_PLATFORM_TYPE platform = 3;//平台
+    E_MENU_TYPE     menuType = 4;//商品所在的菜单
+}
+
+message GoodsBuyResp
+{
+    sint32 resultCode   = 1;
+    GoodsDetail detail  = 2;
+}
+

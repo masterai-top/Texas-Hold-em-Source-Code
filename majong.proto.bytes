@@ -1,0 +1,324 @@
+syntax = "proto3";
+
+option cc_generic_services=false;
+
+//
+package XGameMJProto;
+
+//协议版本
+enum E_Proto_Version
+{
+    iProtoVersionDefault    = 0;
+    iProtoVersion           = 1021;  //协议版本
+}
+
+//消息号枚举
+enum EMsgID 
+{
+    EmiBegin = 0;
+
+    EmiReadyBegin              = 10010;//房间发起sitdown后，发该消息，类似于举手，只有命令字，无消息内容
+    EmiCheckpoint              = 10015;//关卡列表
+    EmiSnapshot                = 10016;//快照
+    EmiGameBeginNotify         = 10018;//游戏开局
+    EmiGameEndNotify           = 10019;//游戏结束
+    EmiPlayAction              = 10020;//行动请求
+    EmiPlayActionNotify        = 10022;//可以操作通知
+    EmiPlayActionResultNotify  = 10023;//操作结果推送
+
+    EmiCSTuoGuan               = 10024;//托管
+    EmiTuoGuanNotify           = 10025;
+
+    EMsgEnd = 10099;
+}
+
+enum EMsgResult
+{
+    EmrSucess           = 0; //成功
+    EmrFail             = 1; //失败
+    EmrNotFoundCard     = 2; //找不到这个牌
+    EmrNotFoundOp       = 3; //找不到这个操作
+    EmrPlayCardInvalid  = 4; //报听没有出摸进来的牌
+    EmrNotFoundGangCard = 5; //找不到要杠的牌
+}
+
+// 操作ID
+enum OpretionID
+{
+    OiBegin             = 0;
+    OiBuHua             = 1; //补花
+    OiHu                = 2; //胡
+    OiAnGang            = 3; //暗杠
+    OiMingGang          = 4; //明杠
+    OiPengGang          = 5; //碰杠
+    OiPeng              = 6; //碰
+    OiChi               = 7; //吃
+    OiCancle            = 8; //取消
+    OiDealOne           = 9; //摸牌
+    OiPlayCard          = 10; //出牌
+    OiEnd               = 11;
+}
+
+enum DoorCardType
+{
+	INVALID = 0;//无效类型 
+	JIANG   = 1;//将牌
+	SHUN_ZI = 2;//顺子
+	KE_ZI   = 3;//刻子
+	CHI     = 4;//吃
+	PENG    = 5;//碰
+	GANG    = 6;//明杠
+	AN_GANG = 7;//暗杠
+    PENG_GANG = 8;//碰杠
+}
+
+enum ChiOption
+{
+    CoInvalid = 0;
+    CoLeft = 1;   //用操作牌的左边两张吃
+    CoMeddle = 2; //用操作牌的左右两张吃
+    CoRight = 3;  //用操作牌的右边两张吃
+}
+
+enum HuType
+{
+    /**************88番*****************/
+    kInvalid = 0;//无效类型
+    kDaSiXi = 1; // 大四喜
+    kDaSanYuan = 2; // 大三元
+    kJiuBaoLianDeng = 3; // 九宝连灯
+    kSiGang = 4; // 四杠
+    kQiLianDui = 5; // 七连对
+    kBaiWanShi = 6; // 百万石
+    kTianHu = 7; // 天胡
+    kDiHu = 8; // 地胡
+    kRenHu = 9; // 人胡
+
+    /**************64番*****************/
+    kXiaoSixi = 10; // 小四喜
+    kXiaoSanYuan = 11;// 小三元
+    kZiYiSe = 12; // 字一色
+    kSiAnKe = 13; // 四暗刻
+    kYiSeShuangLongHui = 14; // 一色双龙会
+
+    /**************48番*****************/
+    kYiSeSiTongShun = 15; // 一色四筒顺
+    kYiSeSiJieGao = 16; // 一色四节高
+
+    /**************32番*****************/
+    kYiSeSiBuGao = 17; // 一色四步高
+    kSanGang = 18; // 三杠
+    kHunYao9 = 19; // 混幺九
+
+    /**************24番*****************/
+    kQiDui = 20; // 七对
+    kQingYiSe = 21; // 清一色
+    kYiSeSanTongShun = 22; // 一色三同顺
+    kYiSeSanJieGao = 23; // 一色三节高
+
+    /**************16番*****************/
+    kQingLong = 24; // 清龙
+    kYiSeSanBuGao = 25; // 一色三步高
+    kSanAnKe = 26; // 三暗刻
+    kTianTing = 27; // 天听
+
+    /**************12番*****************/
+    kDaYu5 = 28; // 大于5
+    kXiaoYu5 = 29; // 小于5
+    kSanFengKe = 30; // 三风刻
+
+    /**************8番*****************/
+    kMiaoShouHuiChun = 31; // 妙手回春
+    kHaiDiLaoYue = 32; // 海底捞月
+    kGangShangHua = 33; // 杠上开花
+    kQiangGangHu = 34; // 抢杠胡
+    
+    /**************6番*****************/
+    kPengPengHu = 35; // 碰碰胡
+    kHunYiSe = 36; // 混一色
+    kQuanQiuRen = 37; // 全球人
+    kShuangAnGang = 38; // 双暗杠
+    kShuangJianKe = 39; // 双箭刻
+
+    /**************4番*****************/
+    kQuanDaiYao = 40; // 全带幺
+    kBuQiuRen = 41; // 不求人
+    kShuangMingGang = 42; // 双明杠
+    kHuJueZhang = 43; // 胡绝张
+    kZhiLi = 44; // 直立
+
+    /**************2番*****************/
+    kJianKe = 45; // 箭刻
+    kMenQianQing = 46; // 门前清
+    kPingHu = 47; // 平胡
+    kSiGuiYi = 48; // 四归一
+    kShuangAnKe = 49; // 双暗刻
+    kYiAnGang = 50; // 暗杠
+    kDuanYao = 51; // 断幺
+
+    /**************1番*****************/
+    kErWuBaJiang = 52; // 二五八将
+    kYaoJiuTou = 53; // 幺九头
+    kBaoTing = 54; //报听
+    kYiBanGao = 55; // 一般高
+    kLianLiu = 56; // 连六
+    kLaoShaoFu = 57; // 老少副
+    kYaoJiuKe = 58; // 幺九刻
+    kYiMingGang = 59; // 一明杠
+    kBianZhang = 60; // 边张
+    kKanZhang = 61; // 坎张
+    kDanDiaoJing = 62; // 单吊将
+    kZiMo = 63; //自摸
+};
+
+message DoorCards
+{
+    DoorCardType type = 1; //门牌类型
+    repeated uint32 cards = 2;//门牌
+    uint32 play_card = 3;//操作的牌
+}
+
+message TingInfo
+{
+    message TingUnit
+    {
+        sint32 card = 1;//听的牌
+        sint32 remain_num = 2;//剩余张数
+        sint32 fan = 3;//番数       
+    }
+    repeated TingUnit unit = 1;
+}
+
+message ReadyBeginReq
+{
+}
+
+message ReadyBeginRsp
+{
+    sint32 ret = 1;
+}
+
+message GameBeginNotify
+{
+    message Cards
+    {
+        repeated uint32 cards = 1;//手牌
+        repeated uint32 hua_cards = 2;//花牌
+    }
+    sint32 banker_cid = 1;
+    sint32 dice1 = 3;//色子1
+    sint32 dice2 = 4;//色子2
+    map<sint32, Cards> hand_cards = 5;//手牌 key为seat_id
+}
+
+message GameEndNotify
+{
+    message SettleAccounts
+    {
+        repeated uint32 hand_cards = 1;//手牌
+        repeated DoorCards doorcards = 2;//吃碰杠的牌
+        repeated HuType hutype = 3;//胡牌类型
+        sint32 fan = 4;//番数
+        sint32 score = 5;//分数
+        uint64 wealth = 6;//玩家当前筹码
+    }
+
+    uint32 card = 2;//胡的牌
+    sint32 cid = 3;//胡的座位id
+    map<sint32, SettleAccounts> settle_accounts = 1;//key为seat_id
+}
+
+message OpreateNotify
+{
+    repeated uint32 cards = 1;//操作的牌
+    repeated OpretionID ops = 2;//操作列表
+    repeated ChiOption options = 3;//吃的选项
+    repeated uint32 apcards = 4;//可以杠的牌
+    map<uint32, TingInfo> tinginfo = 5;//key为打出去后可以听的牌
+}
+
+message PlayActionReq
+{
+    OpretionID opreate = 1; //操作ID
+    int32 card = 2;//操作的牌
+    ChiOption option = 3;//吃的选项
+    bool baoting = 4;//是否报听（1是 0否）
+}
+
+message PlayActionRsp
+{
+    sint32 ret = 1;
+}
+
+message PlayActionNotify
+{
+    OpreateNotify details = 2;//操作消息体
+    sint32 timeout = 3;//当前操作剩余秒数
+    sint32 cid = 4;//当前操作玩家的座位id
+}
+
+message PlayActionResultNotify
+{
+    OpretionID opreate = 1;//操作ID
+    sint32 cid = 2;//操作的座位号
+    ChiOption option = 3;//吃的操作选项
+    uint32 play_card = 4;//操作的牌
+    bool baoting = 6;//是否报听（1是 0否）
+
+    PlayActionNotify action_notify = 5;//下一行动回合的数据
+}
+
+
+message SnapshotReq
+{
+
+}
+
+message SnapshotRsp
+{
+    message PlayerInfo
+    {
+        sint64      lPlayerID     = 1;  //玩家ID
+        sint32      iCid          = 2;  //所在桌子位置
+        string      sNickName     = 3;  //玩家昵称
+        string      sHeadStr      = 4;  //头像路径
+        sint32      iPlayerGender = 5;  //玩家性别 0-未知 1-男 2-女
+        sint64      lPlayerScore  = 6; //玩家当前筹码
+        int64       lWinScore     = 7; //输赢分数
+        sint32      iReadyTime    = 11; //准备时间
+        bool        bMaxLimit     = 12; //封顶
+        bool        bMinLimit     = 13; //破产
+    }
+
+    message SeatInfo
+    {
+        PlayerInfo player_info = 1;//玩家信息
+        repeated uint32 hand_cards = 2;//手牌
+        repeated DoorCards door_cards = 3;//门牌
+        repeated uint32 play_cards = 4;//打出的牌
+        repeated uint32 hua_cards = 5;//花牌
+        bool baoting = 6;//是否报听
+        bool tuoguan = 7;//托管
+    }
+
+    sint32 ret = 1;
+    sint32 banker_cid = 2;//庄家座位id
+    sint32 dice1 = 3;//色子1
+    sint32 dice2 = 4;//色子2
+    sint32 remain_num = 5;//剩余牌数
+    int64 bet_id = 6; //场次ID      
+    PlayActionNotify action_notify = 7;//下一行动回合的数据
+    repeated SeatInfo seat_info = 8;//座位信息
+    OpretionID prev_op = 9;//上一个操作
+}
+
+//EmiCSTuoGuan EmiTuoGuanNotify
+message EmiCSTuoGuanMsg
+{
+    int32 iResultID = 1;
+    int32 iCid = 2; //座位号
+    bool bTuoGuan = 3; //是否托管
+}
+
+//////////////////////////////////////////
+

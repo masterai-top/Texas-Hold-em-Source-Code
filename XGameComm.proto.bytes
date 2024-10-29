@@ -1,0 +1,301 @@
+syntax = "proto3";
+
+option cc_generic_services=false;
+
+package XGameComm;
+
+//用户标识
+message TUid
+{
+    sint64 lUid = 1;    //用户id
+    string sToken = 2;  //用户token
+}
+
+// 消息类型
+enum MSGTYPE
+{
+    MSGTYPE_REQUEST  = 0;       //请求消息
+    MSGTYPE_RESPONSE = 1;       //响应消息
+    MSGTYPE_NOTIFY   = 2;       //通知消息
+}
+
+//服务类型
+enum SERVICE_TYPE
+{
+    SERVICE_TYPE_DEFAULT        = 0;        //默认
+    SERVICE_TYPE_LOGIN          = 1;        //登录服务
+    SERVICE_TYPE_USER_INFO      = 2;        //用户信息服务
+    SERVICE_TYPE_CONFIG         = 3;        //配置服务
+    SERVICE_TYPE_ROOM_DYNAMIC   = 4;        //房间动态服务
+    SERVICE_TYPE_FRIENDS        = 5;        //好友服务
+    SERVICE_TYPE_CHAT           = 6;        //聊天服务
+    SERVICE_TYPE_RANK_BOARD     = 7;        //排行榜
+    SERVICE_TYPE_USER_STATE     = 8;        //用线状态服务
+    SERVICE_TYPE_MATCH          = 9;        //比赛服务
+    SERVICE_TYPE_MAIL           = 10;       //消息服务
+    SERVICE_TYPE_MALL           = 11;       //商城
+    SERVICE_TYPE_SIGNIN         = 12;       //每日签到
+    SERVICE_TYPE_LOTTERY        = 13;       //旋转
+    SERVICE_TYPE_GOLD_PIG       = 14;       //金猪
+    SERVICE_TYPE_TASK           = 15;       //任务
+    SERVICE_TYPE_GAME_RECORD    = 16;       //游戏行为记录
+    SERVICE_TYPE_REDDOT         = 17;       //红点服务
+    SERVICE_TYPE_PUSH           = 18;       //推送服务
+    SERVICE_TYPE_ORDER          = 19;       //订单服务
+    SERVICE_TYPE_NICKNAME       = 20;       //昵称服务
+    SERVICE_TYPE_HALL           = 21;       //大厅服务
+}
+
+// 消息头
+message TMsgHead
+{
+    sint32       nMsgID      = 1; //消息ID
+    MSGTYPE      nMsgType    = 2; //消息类型
+    SERVICE_TYPE serviceType = 3; //服务类型
+}
+
+// 通讯包头
+message TPackage
+{
+    sint32            iVersion      = 1;//客户端版本
+    TUid              stUid         = 2;//用户标识
+    sint32            iGameID       = 3;//游戏ID
+    string            sRoomID       = 4;//RoomID
+    sint32            iRoomServerID = 5;//RoomServerID
+    sint32            iSequence     = 6;//序列号
+    sint32            iFlag         = 7;//标志位
+    repeated TMsgHead vecMsgHead    = 8;//消息头数据
+    repeated bytes    vecMsgData    = 9;//消息体数据
+}
+
+enum Eum_Comm_Msgid
+{
+    E_MSGID_DEFAULT = 0;
+
+    //游戏消息 client<-->gameSO, msgid(1--10给游戏so使用)
+    E_MSGID_GAME_SO_REQ         = 1;    //游戏消息请求[C->S]so中实现
+    E_MSGID_GAME_SO_RESP        = 2;    //游戏消息应答[S->C] 
+    E_MSGID_GAME_SO_NOTIFY      = 3;    //游戏消息通知[S->C] 
+    E_MSGID_SIZZLER_SO_NOTIFY   = 4;    //时时乐游戏通知消息[S->C]
+
+    //Route使用消息, msgid(11-20给Route使用)
+    E_MSGID_LOGIN_HALL_REQ  = 11;   //登录大厅消息请求[C->S]
+    E_MSGID_LOGIN_HALL_RESP = 12;  //登录大厅消息响应[S->C]
+
+    E_MSGID_KEEP_ALIVE_REQ  = 13;   //心跳消息请求
+    E_MSGID_KEEP_ALIVE_RESP = 14;  //心跳消息响应
+
+    //Room使用消息, msgid(21-100给Room使用)
+    //msgid(21-30给Room单向通知客户端使用)
+    E_MSGID_OFFLINE_NOTIFY           = 21; //断线消息响应[S->C,Data:]
+    E_MSGID_SERVER_RESET_NOTIFY      = 22; //重启通知
+    E_MSGID_USER_NOT_EXIST_NOTIFY    = 23; //用户不存在
+    E_MSGID_ROOMID_NOT_EXIST_NOTIFY  = 24; //ROOMID不存在
+    E_MSGID_WEALTH_NOT_ENOUGH_NOTIFY = 25; //财富不够
+    E_MSGID_TABLE_NOT_ENOUGHT_NOTIFY = 26; //桌子不够
+    E_MSGID_WEALTH_OVER_NOTIFY       = 27; //财富超过
+
+    //msgid(31-100给Room响应客户端请求的公共消息)
+    E_MSGID_CHAT_TE_REQ         = 31;   //文本与表情聊天请求[C->S,Data:]
+    E_MSGID_CHAT_TE_NOTIFY      = 32;   //文本与表情聊天通知[S->C,Data:]
+    E_MSGID_CHAT_AUDIO_REQ      = 33;   //语音聊天请求[C->S,Data:]
+    E_MSGID_CHAT_AUDIO_NOTIFY   = 34;   //语音聊天结果[S->C,Data:]
+    E_MSGID_GPS_REQ             = 35;   //GPS请求[C->S,Data:]
+    E_MSGID_GPS_NOTIFY          = 36;   //GPS结果[S->C,Data:]
+    E_MSGID_GPS_RE_REQ          = 37;   //GPS再请求[C->S,Data:]
+    E_MSGID_ROOM_INFO_REQ       = 38;   //房间信息
+    E_MSGID_ROOM_INFO_RESP      = 39;   //房间信息
+    E_MSGID_ROOM_LIST_REQ       = 40;   //房间列表
+    E_MSGID_ROOM_LIST_RESP      = 41;   //房间列表
+    E_MSGID_INVITE_LIST_REQ     = 42;   //邀请玩家列表请求
+    E_MSGID_INVITE_LIST_RESP    = 43;   //邀请玩家列表应答
+    E_MSGID_INVITE_PLAYER_REQ   = 44;   //邀请玩家请求
+    E_MSGID_INVITE_PLAYER_RESP  = 45;   //邀请玩家应答
+    E_MSGID_WATCH_REQ           = 46;   //观战列表
+    E_MSGID_WATCH_RESP          = 47;
+    E_MSGID_WATCH_NOTIFY        = 48;
+    E_MSGID_PROPS_INFO_REQ      = 49;   //
+    E_MSGID_PROPS_INFO_RESP     = 50;   //道具信息
+
+    //msgid(10000+给红点推送服务使用)
+    E_MSGID_CLUB_ROOM_CONFIG_CHANGE_REQ   = 20000;    //俱乐部玩法变化，body为string类型的configId
+    E_MSGID_CLUB_ROOM_DISMISS_REQ         = 20001;    //俱乐部房间解散，body为string类型的recordId
+    E_MSGID_USER_ACCOUNT_GOLD_CHANGE_REQ  = 20051;    //用户金币更新，body为string类型的gold
+}
+
+//登录应答
+message TMsgRespLoginHall
+{
+    sint32 iResultID = 1;    //返回结果：0：成功，其他：失败
+}
+
+//Room使用msgid消息结构
+//玩家断线消息响应
+message TMsgRespOffline
+{
+    sint64 lPlayerID = 1;   //玩家ID
+    sint32 iChairID = 2;    //桌子位置
+}
+
+message TMsgPropsInfo
+{
+    message TMsgInfo{
+        sint32 iPropsID = 1;
+        sint32 iPropsNum = 2; //当前数量
+        sint64 lPropsExpire = 3; //过期时间
+        sint32 lCostCfg = 4; //消耗金币
+    }
+    map<sint32, TMsgInfo> mInfo = 1;
+}
+
+message TMsgReqProps
+{
+}
+
+message TMsgRespProps
+{
+   map<sint32, TMsgPropsInfo> mPropsInfo = 1; //{type: info} type: 7: 付费表情, 8： 道具, 9： 礼物
+}
+
+//文本与表情聊天请求
+message TMsgReqChat
+{
+    sint32 iChatType = 1;   //聊天类型 1.文本聊天, 2.表情聊天 3.表情礼包 4. 礼物
+    string sChatData = 2;   //聊天数据内容
+    sint32 iDestChairId = 3;// 目的座位号  -1 : 所有人
+    sint32 iPropsID = 4;    //道具ID
+}
+
+//文本与表情聊天响应
+message TMsgRespChat
+{
+    sint32 iResultID  = 1;    //返回结果：0.成功
+    sint32 iChatType  = 2;    //聊天类型 1.文本聊天, 2.表情聊天 3.表情礼包
+    string sChatData  = 3;    //聊天数据内容
+    sint32 iChairID   = 4;    //玩家所在桌子位置
+    string sName      = 5;    //发起者名字
+    string sAvatar    = 6;    //玩家头像
+    sint32 iGender    = 7;    //玩家性别 0-未知 1-男 2-女
+    sint64 lPlayerID  = 8;    //玩家ID
+    sint64 lTimestamp = 9;    //时间戳
+    TMsgPropsInfo mPropsInfo= 10;// 玩家道具信息
+    sint32 iDestChairId = 11;// 目的座位号
+    sint32 iPropsID = 12;    // 使用道具ID
+}
+
+//语音聊天请求
+message TMsgReqAudioChat
+{
+    string sChatData = 1;    //语音聊天内容
+    sint32 duration = 2;     //语音聊天时长
+}
+
+//语音聊天响应
+message TMsgRespAudioChat
+{
+    sint32 iResultID = 1;    // 返回结果：0.成功
+    sint32 iChairID = 2;     // 玩家所在桌子位置
+    string sChatData = 3;    // 语音聊天内容
+    sint32 duration = 4;     // 语音聊天时长
+}   
+
+//GPS请求
+message TMsgReqGPS
+{
+    sint32 iLongitude = 1; //经度
+    sint32 iLatitude = 2;  //纬度
+}
+
+//GPS响应
+message TMsgRespGPS
+{
+    sint32 iResultID = 1;  //返回结果：0.成功, -1.其它错误
+    sint32 iChairID = 2;   //椅子ID
+    sint32 iLongitude = 3; //经度
+    sint32 iLatitude = 4;  //纬度
+}
+
+message TMsgRespServerReset
+{
+    sint32 iResultID = 1;  //
+}
+
+message TMsgReqRoomInfo
+{
+
+}
+
+message TMsgRespRoomInfo
+{
+    sint32 iResultID = 1;
+    string sRoomID = 2;
+    string sRoomName = 3;
+    sint32 iTableID = 4;
+    sint32 iDeskNum = 5;//开桌数
+}
+
+//玩家游戏状态
+enum Eum_Comm_Player_State
+{
+    EUM_PLAYER_STATE_OFFLINE = 0; //离线
+    EUM_PLAYER_STATE_ONLINE  = 1; //在线
+    EUM_PLAYER_STATE_PLAYING = 2; //游戏中
+}
+
+//被邀请玩家信息
+message TMsgInvitedPlayerInfo
+{
+    sint64 lPlayerID     = 1;   //玩家ID
+    sint32 iPlayerGender = 2;   //玩家性别: 0-未知,1-男,2-女
+    sint32 iLevel        = 3;   //玩家等级
+    string sNickName     = 4;   //玩家昵称
+    string sAvatar       = 5;   //玩家头像
+    Eum_Comm_Player_State state = 6;//玩家游戏状态: 0-离线,1-在线,2-游戏中
+    sint64 lTimestamp    = 7;   //邀请时间戳
+}
+
+//邀请玩家列表应答[S->C]
+message TMsgRespGetInviteList
+{
+    sint32 iResultID = 1;   //返回结果: 0.成功，其他失败
+    repeated TMsgInvitedPlayerInfo friendInfo = 2;//好友玩家信息
+    repeated TMsgInvitedPlayerInfo playerInfo = 3;//非好友在线玩家信息
+}
+
+//邀请玩家请求[C->S]
+message TMsgReqInvitePlayer
+{
+    sint64 lPlayerID   = 1;    //玩家ID,为0表示邀请全部
+    sint32 iPlayerType = 2;    //玩家类型: 1-好友玩家,2-非好友在线玩家
+}
+
+//邀请玩家应答[S->C]
+message TMsgRespInvitePlayer
+{
+    sint32 iResultID  = 1;   //返回结果: 0.成功，其他失败
+    sint64 lPlayerID  = 2;   //玩家ID,为0表示邀请全部
+    sint64 lTimestamp = 3;   //邀请时间戳
+}
+
+//观战列表
+message TMsgRespWatchList
+{
+    message PlayerItem
+    {
+        sint64 lPlayerID = 1;    //玩家ID
+        string sNickName = 2;    //玩家昵称
+        string sHeadStr = 3;     //头像路径
+        sint32 iPlayerGender = 4;  //玩家性别 0-未知 1-男 2-女
+        sint64 lTimestamp = 5;   //邀请时间戳
+    }
+    sint32 iResultID = 1;
+    sint32 iTotalCount = 2;
+    repeated PlayerItem item = 3;
+}
+
+//E_MSGID_WATCH_NOTIFY
+message TMsgNotifyWatchInvite
+{
+   sint64 lPlayerID  = 1;
+   string sNickName = 2;    //玩家昵称
+}

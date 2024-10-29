@@ -1,0 +1,172 @@
+
+syntax = "proto3";
+
+option cc_generic_services=false;
+
+package TaskProto;
+
+// 变量命令参考Excel配置表
+message RewardItem
+{
+    sint32 goodsID  = 1;    //物品ID
+    sint32 count    = 2;    //物品数量
+    sint32 rewardId = 3;    //奖品ID
+}
+
+enum E_TASK_SUB_TYPE
+{
+    E_TASK_SUB_TYPE_NONE                        = 0;   //非法值
+    E_TASK_SUB_TYPE_FINISH_ALL                  = 1;   //完成此任务大类下的所有任务
+    E_TASK_SUB_TYPE_ONLINE_TIME                 = 2;   //累计在线时长(秒)
+    E_TASK_SUB_TYPE_INGAME_TIME                 = 3;   //累计在玩时长(秒)
+    E_TASK_SUB_TYPE_SPECIFY_QS_ROOM             = 4;   //经典场指定房间玩牌局数
+    E_TASK_SUB_TYPE_ANY_QS_ROOM                 = 5;   //经典场任意房间玩牌局数
+    E_TASK_SUB_TYPE_WINCHIPS_QS_ROOM            = 6;   //经典场任意房间赢得筹码数量
+    E_TASK_SUB_TYPE_WINCHIPS_ANY_ROOM           = 7;   //经典场任意房间赢得筹码数量和SNG,MTT奖励筹码数量总和
+    E_TASK_SUB_TYPE_SPECIFY_CARD_TYPE           = 8;   //组成指定牌型
+    E_TASK_SUB_TYPE_UPGRADE_LEVEL               = 9;   //玩家等级提升
+    E_TASK_SUB_TYPE_SPECIFY_SNG3_ROOM           = 10;  //参加指定3人SNG赛事
+    E_TASK_SUB_TYPE_ANY_SNG3_ROOM               = 11;  //参加任意3人SNG赛事
+    E_TASK_SUB_TYPE_SPECIFY_SNG5_ROOM           = 12;  //参加指定5人SNG赛事
+    E_TASK_SUB_TYPE_ANY_SNG5_ROOM               = 13;  //参加任意5人SNG赛事
+    E_TASK_SUB_TYPE_SPECIFY_SNG9_ROOM           = 14;  //参加指定9人SNG赛事
+    E_TASK_SUB_TYPE_ANY_SNG9_ROOM               = 15;  //参加任意9人SNG赛事
+    E_TASK_SUB_TYPE_SPECIFY_RECHARGE            = 16;  //完成指定档位的充值
+    E_TASK_SUB_TYPE_ANY_RECHARGE                = 17;  //完成任意档位的充值
+    E_TASK_SUB_TYPE_SNG_MATCH_CHAMPION          = 18;  //在SNG赛事中获得第一名
+    E_TASK_SUB_TYPE_MTT_MATCH_CHAMPION          = 19;  //在MTT赛事中获得第一名
+    E_TASK_SUB_TYPE_ADD_FRIENDS                 = 20;  //添加好友
+    E_TASK_SUB_TYPE_RECHARGE_WINCHIPS_QS        = 21;  //经典场任意房间赢得筹码数量(完成每日充值任务后生效)
+    E_TASK_SUB_TYPE_RECHARGE_WINCHIPS_ANY       = 22;  //经典场任意房间赢得筹码数量和SNG,MTT奖励筹码数量总和(完成每日充值任务后生效)
+    E_TASK_SUB_TYPE_AI_ROOM                     = 23;  //参加任意AI场挑战赛
+    E_TASK_SUB_TYPE_WINCHIPS_AI_ROOM            = 24;  //AI挑战赛中累计赢得筹码数量
+    E_TASK_SUB_TYPE_AOF_ROOM                     = 25;  //
+    E_TASK_SUB_TYPE_WINCHIPS_AOF_ROOM            = 26;  //
+}
+
+message TaskItem
+{
+    string          desc         = 1;  //任务描述
+    RewardItem      reward       = 2;  //奖励列表
+    sint64          condition    = 3;  //完成条件
+    sint64          progressRate = 4;  //当前完成的进度
+    bool            open         = 5;  //能否跳转
+    bool            hasReceive   = 6;  //奖励是否已领取
+    string          roomId       = 7;  //不存在则为""
+    string          matchId      = 8;  //不存在则为""
+    E_TASK_SUB_TYPE subType      = 9;  //子类型
+    sint32          taskId       = 10; //任务ID
+    sint32          preTask      = 11; //前置任务
+}
+
+enum E_TASK_TYPE
+{
+    E_TASK_NONE         = 0; //默认值--无效
+    E_TASK_DAY          = 1; //每日任务
+    E_TASK_WEEK         = 2; //每周任务
+    E_TASK_GROW_UP      = 3; //成长任务
+    E_TASK_DAY_NOVICE   = 4; //新手每日任务
+    E_TASK_LEVEL        = 5; //冲级任务
+    E_TASK_DAY_RECHARGE = 6; //每日充值任务
+}
+
+message TaskQueryReq
+{
+    E_TASK_TYPE type = 1; //查询任务列表
+}
+
+message TaskQueryResp
+{
+    sint32 resultCode      = 1;
+    E_TASK_TYPE type       = 2;
+    repeated TaskItem data = 3;
+}
+
+message AquireRewardReq
+{
+    E_TASK_TYPE type   = 1; // 任务类型
+    sint32      taskId = 2; //任务ID
+}
+
+message AquireRewardResp
+{
+    sint32 resultCode = 1;
+    sint32 taskId     = 2;
+    E_TASK_TYPE type  = 3; 
+}
+
+enum E_TASK_SEASON_TYPE
+{
+    E_SEASON_NONE    = 0; //默认值--无效
+    E_SEASON_NOW     = 1; //当前赛季
+    E_SEASON_LAST    = 2; //上次赛季
+}
+
+//赛季奖励
+message SeasonRewards
+{
+    sint32 rewardID   = 1;//赛季奖励ID
+    sint32 rewardType = 2;//赛季奖励类型: 1-段位,2-排名
+}
+
+message SeasonRewardsGroupReq
+{
+    E_TASK_SEASON_TYPE type = 1;//赛季类型,参考E_TASK_SEASON_TYPE
+}
+
+message SeasonRewardsGroupResp
+{
+    sint32 resultCode = 1;
+    E_TASK_SEASON_TYPE type = 2;//赛季类型,参考E_TASK_SEASON_TYPE
+    sint32 beginTime = 3;//赛季开始时间
+    sint32 endTime = 4;//赛季结束时间
+    repeated SeasonRewards rewardList = 5;//已领取的奖励信息
+}
+
+message SeasonRewardsGetReq
+{
+    E_TASK_SEASON_TYPE type = 1;//赛季类型,参考E_TASK_SEASON_TYPE
+    SeasonRewards reward    = 2;//赛季奖励
+}
+
+message SeasonRewardsGetResp
+{
+    sint32 resultCode       = 1;
+    E_TASK_SEASON_TYPE type = 2;//赛季类型,参考E_TASK_SEASON_TYPE
+    SeasonRewards reward    = 3;//赛季奖励
+}
+
+message ShareQueryReq
+{
+    sint32 type = 1;        //奖励类型: 1-邀请 2-绑定
+}
+
+message ShareQueryResp
+{
+    sint32 type = 1;        //奖励类型: 1-邀请 2-绑定
+    sint32 resultCode = 2;  //返回码: 0-未操作, 1-已操作
+    string sharecode = 3;   //邀请码
+    sint32 count = 4;       //奖励数量
+}
+
+message ShareAwardQueryResp
+{
+    sint32 resultCode = 1;  //返回码: 0-可以领取, 1-不能领取
+}
+
+message ShareGetAwardResp
+{
+    sint32 resultCode = 1;  //返回码: 0-成功, 1-已领取，2-未分享
+    sint32 count = 2;       //奖励数量
+}
+
+message BindShareCodeReq
+{
+    string sharecode = 1;   //邀请码
+}
+
+message BindShareCodeResp
+{
+    sint32 resultCode = 1;  //返回码： 0-成功, 1-邀请码不存在, 2-已经绑定过邀请码
+    sint32 count = 2;       //奖励数量       
+}

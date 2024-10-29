@@ -1,0 +1,24 @@
+
+syntax = "proto3";
+
+option cc_generic_services=false;
+
+package RedDotProto;
+
+//业务类型
+enum E_Business_Type
+{
+    E_BUSINESS_TYPE_UNKNOWN = 0; //未知
+    E_BUSINESS_TYPE_LOTTERY = 1; //转盘
+    E_BUSINESS_TYPE_SIGN    = 2; //签到
+}
+
+//取红点数据应答
+message ReddotInfoResp
+{
+    sint32 resultCode = 1;	                //结果码
+    map<sint32, sint32> mapData = 2;        //红点数据
+}
+
+
+

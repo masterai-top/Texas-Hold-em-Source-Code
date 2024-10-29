@@ -1,0 +1,162 @@
+syntax = "proto3";
+
+option cc_generic_services=false;
+
+package XGameAi;
+
+enum Eum_Ai_Msgid
+{
+    E_MSGID_DEFAULT = 0;
+
+    E_AI_MSGID_SITDOWN_REQ          = 807;     //坐下桌子请求[C->S,Data:]
+    E_AI_MSGID_SITDOWN_RESP         = 808;     //坐下桌子响应[S->C,Data:]
+    E_AI_MSGID_SITDOWN_NOTIFY       = 809;     //坐下桌子通知[S->C,Data:]
+
+    E_AI_MSGID_EXIT_REQ             = 810;     //退出房间请求[C->S]
+    E_AI_MSGID_EXIT_RESP            = 811;     //退出房间响应[S->C,Data:]
+    E_AI_MSGID_EXIT_NOTIFY          = 812;     //退出房间通知[S->C,Data:] 
+
+    E_AI_MSGID_LOGIN_ROOM_REQ       = 813;     //登录房间消息请求[C->S]
+    E_AI_MSGID_LOGIN_ROOM_RESP      = 814;     //登录房间消息响应[S->C,Data:]
+    E_AI_MSGID_RECOME_NOTIFY        = 815;     //重入消息响应[S->C,Data:] 
+
+    E_AI_MSGID_ENTER_ROOM_REQ       = 819;     //进入房间请求[C->S] @重连操作
+    E_AI_MSGID_ENTER_SUCC_NOTIFY    = 821;     //进入房间成功通知[S->C] @用于客户端发坐桌消息，坐桌等待模式
+
+    E_AI_MSGID_STAND_REQ            = 851;     //站起请求[C->S,Data:]
+    E_AI_MSGID_STAND_RESP           = 852;     //站起响应[S->C,Data:]
+    E_AI_MSGID_STAND_NOTIFY         = 853;     //站起通知[S->C,Data:]
+
+    E_AI_MSGID_WATCH_REQ            = 854;     //观战请求[C->S,Data:]
+    E_AI_MSGID_WATCH_RESP           = 855;     //观战响应[S->C,Data:]
+
+    E_AI_START_MSGID_GET_TABLE_LIST_REQ   = 856;     //取桌子列表请求[C->S]
+    E_AI_START_MSGID_GET_TABLE_LIST_RESP  = 857;     //取桌子列表应答[S->C]
+}
+
+//切换牌桌应答
+message TAiMsgChangeTable
+{
+    sint32 iResultID = 1;  //返回结果: 0.成功, -1.其它原因
+    sint32 iTableID = 2;   //桌子ID
+}
+
+//玩家坐下请求
+message TAiMsgReqSitDown
+{
+    bool bAutoSit = 1;      //是否自动坐桌 @如果bAutoSit为true，则iChatID为-1
+    sint32 iChairID = 2;    //桌子位置
+    sint32 smallBlind = 3;  // 小盲
+    sint32 bigBlind = 4;    // 大盲
+    sint64 takenIn = 5; //买入
+    sint32 iTableID = 6; // 选定桌子号
+    sint32 iBlindLevel = 7; //盲注等级
+}
+
+//玩家财富
+message TUserWealth
+{
+    sint64 iRoomCard = 1;  //房卡
+    sint64 iDiamond  = 2;   //钻石
+    sint64 lGoldCoin = 3;  //金币
+}
+
+//玩家坐下应答
+message TAiMsgRespSitDown
+{
+    sint32      iResultID     = 1;  //返回结果: 0-成功; 301.指定chairid不可用, -1.其它错误
+    sint64      lPlayerID     = 2;  //玩家ID
+    sint32      iChairID      = 3;  //所在桌子位置
+    string      sNickName     = 4;  //玩家昵称
+    string      sHeadStr      = 5;  //头像路径
+    sint32      iPlayerGender = 6;  //玩家性别 0-未知 1-男 2-女
+    string      sPlayerIP     = 7;  //玩家IP 
+    string      sSignature    = 8;  //玩家签名
+    sint32      iStatue       = 9;  //玩家状态 0.进入 1.观战 2.重连
+    TUserWealth stUserWealth  = 10; //玩家财富
+    bool        bWatchGame    = 11; //是否观战
+    sint64      iTakenin      = 12; //带入
+    sint32      iAiGameRound  = 13; //ai挑战手数
+    sint32      iAiGamePoint  = 14; //ai挑战积分
+    sint32      iAiGameRoundLimit = 15; //ai挑战局数限制
+}
+
+//站起应答
+message TAiMsgRspStand
+{
+    sint32 iResultID = 1;  //返回结果: 0.成功, 201.正在游戏中, -1.其它错误
+}
+
+//玩家起来应答
+message TAiMsgRespExit
+{
+    sint32 iResultID = 1;  //返回结果: 0.成功, 201.正在游戏中, -1.其它错误
+    sint64 lPlayerID = 2;  //玩家ID
+    sint32 iChairID  = 3;  //所在桌子位置
+}
+
+//登录房间消息响应
+message TAiMsgRespLoginRoom
+{
+    sint32 iResultID = 1; //返回结果: 0.成功，其他失败
+    sint32 iStatue = 2;   //玩家状态 0.进入 1.观战 2.重连
+}
+
+//玩家重新进入响应
+message TAiMsgRespRecome
+{
+    sint32 iResultID = 1; //返回结果: 0.成功，其他失败
+    sint64 lPlayerID = 2;   //玩家ID
+    sint32 iChairID = 3;    //桌子位置
+}
+
+//观战应答[S->C]
+message TAIMsgReqWatchGame
+{
+    sint32 iTableID = 1;   //观站
+    bool bSelfSelect = 2;   //是否指定桌子观战
+}
+
+//观战应答[S->C]
+message TAIMsgRespWatchGame
+{
+    sint32 iResultID = 1;   //返回结果: 0.成功，其他失败
+    sint32 iTableID = 2;   //
+}
+
+//取桌子列表请求[C->S]
+message TAIMsgReqGetTableList
+{
+    sint32 iTableID = 1;   //0:拉取所有桌子信息  
+    //sint32 offset = 2;     //开始位置 默认传 1
+    //sint32 count = 3;  //条数 默认传 1
+    sint32 iMaxSeat = 2;
+    sint32 iBlindLevel = 3;
+}
+
+//玩家信息
+message TAIMsgRspTableInfo
+{
+    sint64 lPlayerID = 1;       //玩家ID
+    sint32 iPlayerGender = 2;   //玩家性别 0-未知，1-男， 2-女
+    string sNickName = 3;       //玩家昵称
+    string sHeadStr = 4;        //头像
+    sint64 lPoint = 5;          //分数
+}
+
+//玩家信息
+message TAIMsgRspTableInfoArray
+{
+    map<sint32, TAIMsgRspTableInfo> tableUserInfo = 1;  //单个桌子的玩家信息，位置号<==>玩家信息
+    sint32 iMaxSeat = 2;
+    sint64 lSmallBlind = 3;
+    sint64 lBigBlind = 4;
+}
+
+//取桌子列表应答[S->C]
+message TAIMsgRespGetTableList
+{
+    sint32 iResultID = 1;   //返回结果: 0.成功，其他失败
+    map<sint32, TAIMsgRspTableInfoArray> tableInfo = 2;  //桌子信息，桌子号<==>桌子信息
+    string roomID =3;
+}

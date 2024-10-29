@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+option cc_generic_services=false;
+
+package MailProto;
+
+
+message TMailDataItem
+{
+    sint32 goodsID = 1;//物品ID
+    sint64 count   = 2;//物品数量
+    // 物品图标 物品描述 物品属性等放在客户端配置文件里面
+}
+
+
+message TMailData
+{
+    string title = 1;                   //标题
+    string content = 2;                 //正文
+    repeated TMailDataItem awards = 3;  //奖励
+    sint32 type = 4;                    //邮件类型:1-系统全局邮件,2-系统个人邮件
+    sint64 mailID = 5;                  //用于领取奖励
+    sint32 has_receive = 6;             //奖励是否已领取
+    sint32 has_read = 7;                //已读标志
+    sint32 sendTime = 8;                //发送时间
+    sint32 overdueTime = 9;             //过期时间
+}
+message TReceiveMailRsp
+{
+    sint32 resultCode = 1;
+    repeated TMailData emails = 2;
+}
+
+
+//领取奖励
+message TGetMailDataReq
+{
+    sint64 mailID = 1;//邮件ID,一键全部领取时传0
+}
+
+message TGetMailDataResp
+{
+    sint32 resultCode             = 1;//返回码
+    repeated TMailDataItem awards = 2;//奖励
+    sint64 mailID                 = 3;//邮件ID,一键全部领取时返回0
+}
+
+
+message TDeleteMailReq
+{
+    sint64 mailID = 1;//邮件ID,全部删除时传0
+}
+
+message TDeleteMailResp
+{
+    sint32 resultCode = 1;//返回码:0-成功,1521-邮件内有未领取的奖励
+    sint64 mailID     = 2;//邮件ID,全部删除时返回0
+}
+
+
+message SysMsgItem
+{
+    string contents             = 1;//消息内容,里面有格式
+    sint64 datetime             = 2;//日期
+}
+
+message QuerySysMsgResp
+{
+    repeated SysMsgItem items   = 1;
+    sint32 resultCode           =2;       //返回值
+}
+
+
+message TReadMailReq
+{
+    sint64 mailID = 1;//邮件ID
+}
+
+message TReadMailResp
+{
+    sint32 resultCode = 1;//返回码
+    sint64 mailID = 2;
+}

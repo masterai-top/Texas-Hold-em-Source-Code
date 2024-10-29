@@ -1,0 +1,381 @@
+
+syntax = "proto3";
+
+option cc_generic_services=false;
+
+package matchProto;
+
+//用户报名费
+message UserEntryFee
+{
+    sint32 propsID = 1;     //道具ID
+    sint64 number = 2;      //道具数量
+    sint64 serviceFee = 3;  //服务费
+}
+
+//报名请求
+message SignUpReq
+{
+    sint32 matchID = 1;  //比赛ID
+}
+
+//报名应答
+message SignUpResp
+{
+    sint32 resultCode = 1;	//结果码, 0--正常，其他--错误
+    UserEntryFee entryFee = 2;  //报名费
+}
+
+//取消报名请求
+message QuitReq
+{
+    sint32 matchID = 1;
+}
+
+//取消报名应答
+message QuitResp
+{
+    sint32 resultCode = 1;	//结果码, 0--正常，其他--错误
+    UserEntryFee entryFee = 2;  //报名费
+}
+
+//重购请求
+message RepurchaseReq
+{
+    sint32 matchID = 1;
+}
+
+//重购应答
+message RepurchaseResp
+{
+    sint32 resultCode = 1;	//结果码
+}
+
+//增购请求
+message AdditionalReq
+{
+    sint32 matchID = 1;
+}
+
+//增购应答
+message AdditionalResp
+{
+    sint32 resultCode = 1;	//结果码
+}
+
+//取奖池信息请求
+message JackpotReq
+{
+    sint32 matchID = 1;     //比赛ID
+}
+
+//取奖池信息应答
+message JackpotResp
+{
+    sint32 resultCode = 1;	//结果码
+    sint32 matchID = 2;     //比赛ID
+    sint64 value = 3;       //奖池数量
+}
+
+//取报名人数请求
+message PlayerCountReq
+{
+    sint32 matchID = 1;
+}
+
+//取报名人数应答
+message PlayerCountResp
+{
+    sint32 resultCode = 1;	    //结果码
+    sint32 number = 2;          //数量
+}
+
+//取比赛玩家信息请求（比赛前，比赛中）
+message PlayerInfoReq
+{
+    sint32 matchID  = 1;    //比赛ID
+    //sint32 offset = 2;	//开始位置
+    //sint32 count  = 3;	//条数
+}
+
+//玩家信息
+message PlayerInfo
+{
+    sint64 uid = 1;         //uid
+    sint64 chip = 2;        //筹码
+}
+
+//取比赛玩家信息应答
+message PlayerInfoResp
+{
+    sint32 resultCode = 1;	        //结果码
+    repeated PlayerInfo data = 2;   //玩家信息
+}
+
+//取比赛数据信息请求
+message GameInfoReq
+{
+    sint32 matchID = 1;
+}
+
+// 比赛状态
+enum MatchState
+{
+    MATCH_STATE_DEFAULT         = 0;    //
+    MATCH_STATE_PLAYING_GAME    = 1;	//比赛中
+    MATCH_STATE_END             = 2;	//比赛结束
+}
+
+//比赛数据
+message GameInfo
+{
+    sint32 systime          = 1;    //系统时间
+    sint32 startTime        = 2;    //开赛时间
+    sint32 count            = 3;    //参赛人数
+    sint32 remainingCount   = 4;    //剩余人数
+    sint64 avgChip          = 5;    //平均记分牌
+    sint32 remainingTime    = 6;    //升盲剩余时间, 秒
+    sint32 blindLevel       = 7;    //当前盲注级别
+    sint32 maxBlindLevel    = 8;    //最大盲注级别
+    MatchState matchState   = 9;    //比赛状态
+    sint32 startTimeType    = 10;   //开赛时间类型
+    bool   isfull           = 11;   //是否满员
+}
+
+//取比赛数据信息应答
+message GameInfoResp
+{
+    sint32 resultCode = 1;	        //结果码
+    sint32 matchID = 2;             //比赛ID
+    GameInfo gameInfo = 3;          //比赛数据
+}
+
+//取奖励信息请求
+message ListRewardReq
+{
+    sint32 matchID = 1;         //比赛ID
+    //sint32 awardsID = 2;      //排行奖励组ID
+}
+
+//比赛奖励信息
+message MatchReward
+{
+    sint32 id = 1;          //比赛ID
+    sint32 minPlay = 2;     //最少参与玩家数
+	sint32 maxPlay = 3;     //最多参与玩家数
+    sint32 rewardID = 4;    //奖励ID
+    sint32 number = 5;      //奖励数量
+}
+
+//奖励信息
+message Reward
+{
+    sint32 id = 1;          //奖励ID
+    sint32 rank = 2;        //奖励排名
+    sint32 rankStart = 3;   //奖励排名开始
+    sint32 rankEnd = 4;     //奖励排名结束
+    sint32 ratio = 5;       //奖励比例
+    repeated Props props = 6;   //道具信息
+}
+
+//取奖励信息应答
+message ListRewardResp
+{
+    sint32 resultCode = 1;	        //结果码
+    MatchReward matchReward = 2;    //比赛奖励
+    repeated Reward data = 3;       //奖励道具
+}
+
+//物品类型
+enum E_Goods_Type
+{
+    E_GOODS_TYPE_DEFAULT = 0; 
+    E_GOODS_TYPE_POINT = 1;          //金币
+    E_GOODS_TYPE_REWARD_POINT = 2;       //钻石
+    E_GOODS_TYPE_PASS_TICKET = 3;   //通行券 
+    E_GOODS_TYPE_ENTITY = 4;        //实物
+}
+
+//道具信息
+message Props
+{
+    sint32 id = 1;              //道具ID
+    //E_Goods_Type type = 2;    //道具类型
+    //string name = 3;          //道具名称
+    sint64 number = 4;          //道具数量
+}
+
+//玩家状态
+enum UserState
+{
+    USER_STATE_DEFAULT         = 0;
+    USER_STATE_PLAYING_GAME    = 1;	//比赛中
+    USER_STATE_KNOCKOUT        = 2; //淘汰
+}
+
+//用户报名信息
+message SignUpInfo
+{
+    sint32 matchID = 1;     //比赛ID
+    sint64 chip = 2;        //筹码
+    sint32 ranking = 3;     //排名
+    sint32 additional = 4;  //增购
+    sint32 repurchase = 5;  //重购
+    UserState userState = 6;    //玩家状态
+    sint32 showtype = 7; // 1:等待安排对手  2：等待买入
+}
+
+//用户所有的报名信息
+message UserSignUpInfo
+{
+    map<sint32, SignUpInfo> data = 1;  //报名数据，matchid:
+}
+
+//用户报名信息请求
+message UserSignUpInfoReq
+{
+    sint32 matchID = 1;        //比赛ID
+}
+
+//用户报名信息应答
+message UserSignUpInfoResp
+{
+    sint32 resultCode = 1;      //结果码
+    SignUpInfo info = 2;        //报名信息
+}
+
+//用户是否报名比赛
+message UserSignUpFlagReq
+{
+    sint32 matchID = 1;        //比赛ID
+}
+
+//用户是否报名比赛应答
+message UserSignUpFlagResp
+{
+    sint32 resultCode = 1;      //结果码
+    sint32 flag = 2;            //报名标记，1--已报名，2--已淘汰，其他--未报名
+    sint32 matchID = 3;        //比赛ID
+}
+
+/*
+    赛事相关配置
+*/
+message SNGInfo
+{
+    string name = 1;                // 名称
+    sint32 startGamePeople = 2;     // 开赛人数
+    sint32 gameType = 3;            // 游戏类型 滚轮赛，5人赛，9人赛
+    sint32 initialChip = 4;         // 起始计分
+    sint32 joinCondition = 5;       // 参数条件
+    string matchId = 6;             // ID
+    sint32 joinGamePeople = 7;      // 参数人数
+    string roomID = 8;
+};
+
+// 赛事基础信息
+// E_SNG_INFO_LIST_REQ
+message SNGGetInfoListReq
+{
+    sint32 room_type = 1;
+    sint32 room_sub_type = 2;
+}
+// E_SNG_INFO_LIST_RESP
+message SNGGetInfoListResp
+{
+    sint32 resultCode = 1;
+    repeated SNGInfo infos = 2;
+};
+
+// 道具
+message Item
+{
+    sint32 rewardId = 1;
+    sint64 rewardNum = 2;
+};
+
+// 盲注配置
+message SNGBlindConfig
+{
+    sint32 level = 1;
+    sint32 minBlind = 2;
+    sint32 maxBlind = 3;
+    sint32 frontBlind = 4;
+    sint32 raiseTime = 5;
+}
+// 奖励配置
+message SNGRewardConfig
+{
+    sint32 ranking = 1;
+    repeated Item rewards = 2;
+}
+
+// E_SNG_CONFIG_REQ
+message SNGConfigReq
+{
+    string matchId = 1;             //
+    sint32 tableId = 2; 
+}
+
+// E_SNG_CONFIG_RESP
+message SNGConfigResp
+{
+    sint32 resultCode = 1;
+    repeated SNGBlindConfig blindConfigs = 2;
+    repeated SNGRewardConfig rewardConfigs = 3;
+    string matchId = 4;
+}
+
+message SNGRankingBaseInfo
+{
+    sint32 uid = 1;
+    sint32 ranking = 2;
+    sint32 chip = 3;
+}
+message SNGRankingInfo
+{
+    SNGRankingBaseInfo base = 1;
+    string name = 2;
+    sint32 gender = 3;
+    string headUrl = 4;
+}
+// E_SNG_PROCESS_RANKING_LIST_REQ
+message SNGProcessRankingListReq
+{
+    string matchId = 1; 
+}
+
+// E_SNG_PROCESS_RANKING_LIST_RESP
+message SNGProcessRankingListResp
+{   
+    repeated SNGRankingInfo rankingList = 1;
+}
+
+// E_SNG_PROCESS_REFRESH_RANKING_LIST_REQ
+message SNGProcessRakningRefreshReq
+{
+    string matchId = 1; 
+}
+
+// E_SNG_PROCESS_REFRESH_RANKING_LIST_RESP
+message SNGProcessRakningRefreshResp
+{
+    repeated SNGRankingBaseInfo rankingList = 1;
+}
+
+message AIProcessRoomItme
+{
+    string roomID = 2;      // 房间号
+    sint32 blindLevel = 3;  // 盲注等级
+    sint32 smallBlind = 4;  // 小盲
+    sint32 bigBlind = 5;    // 大盲
+    sint32 curOlineCount = 6;// 当前挑战人数
+    sint64 takenIn = 7; //买入
+}
+
+//E_AI_PROCESS_ROOM_LIST_RESP = 120;
+message AIProcessRoomListResp
+{
+    sint32 resultCode = 1;
+    repeated AIProcessRoomItme infos = 2;
+}

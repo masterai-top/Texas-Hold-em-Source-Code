@@ -1,0 +1,195 @@
+
+syntax = "proto3";
+
+option cc_generic_services=false;
+
+package PushProto;
+
+//比赛开始通知
+message MatchBeginNotify
+{
+    sint32 matchID = 1;         //比赛ID
+    string sRoomID = 2;         //RoomID
+}
+
+//缺省数据
+message DefaultNotify
+{
+    sint32 resultCode = 1;      //结果码
+}
+
+//货币推送消息
+message CoinNotify
+{
+    sint32 changeType    = 1;  //类型
+    sint64 gold          = 2;  //筹码
+    sint64 diamond       = 3;  //钻石
+    sint64 point         = 4;  //积分
+    sint64 tickets       = 5;  //奖券
+    sint32 level         = 6;  //用户等级
+    sint32 experience    = 7;  //当前经验
+    sint32 vipLevel      = 8;  //VIP等级
+    sint32 vipExperience = 9;  //VIP当前经验
+}
+
+//邀请玩家消息
+message InvitedPlayerNotify
+{
+    string sRoomID     = 1;    //房间ID
+    string sRoomName   = 2;    //房间名称
+    string sNickName   = 3;    //邀请玩家昵称
+    sint64 lPlayerID   = 4;    //邀请玩家ID
+    sint64 lBigBlind   = 5;    //大盲注
+    sint64 lSmallBlind = 6;    //小盲注
+    sint32 matchID     = 7;    //比赛ID
+    sint32 tableID     = 8;    //桌子ID
+    string sRoomKey    = 9;
+}
+
+//添加好友消息
+message AddFriendNotify
+{
+    sint64 lPlayerID   = 1;    //添加好友的玩家ID
+    string sNickName   = 2;    //添加好友的玩家昵称
+}
+
+//游戏版本更新通知
+message GameUpdateNotify
+{
+    sint32 isReboot     = 1; //是否需要重启（0-不用，1-重启）
+    sint32 isResUpdate  = 2; //是否为资源更新
+    sint32 isCodeUpdate = 3; //是否为代码更新
+}
+
+//任务完成通知
+message TaskFinishNotify
+{
+    repeated sint32 taskList = 1;//任务ID列表
+}
+
+//充值奖励通知
+message RechargeRewardsNotify
+{
+    sint32 isLimitedTime = 1;//是否限时充值奖励:1-是,0-否
+    sint32 isFirstTime   = 2;//是否首次充值奖励:1-是,0-否
+    sint32 isDailyTime   = 3;//是否每日充值奖励:1-是,0-否
+}
+
+//服务器维护
+message ServerUpdateNotify
+{
+    sint32 iMinutes = 1;//分钟数
+}
+
+
+//通知类型
+enum NotifyType
+{
+    NOTIFY_DEFAULT = 0; //默认
+    CONNECTION_IDLE  = 1; //长时间没有操作游戏
+    SERVICE_MAINTAIN = 2; //当前服务处理维护中
+}
+
+//用户更新通知
+message ServerChangeNotify
+{
+    sint32 iNotifyType = 1; //提示编号
+    sint32 iReturnLoginGUI = 2; //返回登录界面(1-返回，0-不返回)
+}
+
+//AI数据
+message AiDataReport
+{
+    int32 resultCode = 1;
+    int64 uid        = 2;
+    uint32 vpip=3;//主动入池率
+    uint32 pfr=4;//加注入池率
+    uint32 showdown =5;//摊牌率
+    uint32 cbet=6;//持续下注
+    uint32 win_showdown =7;//摊牌胜率
+    uint32 three_bet =8;//3bet
+
+    uint32 vpip_bb=9;//
+    uint32 vpip_btn=10;
+    uint32 fold_to_three_bet=11;
+    uint32 fold_to_four_bet=12;
+    uint32 four_bet=13;
+    uint32 call_five_bet=14;
+    uint32 fold_to_five_bet=15;
+    uint32 limp=16;
+    uint32 limp_raise=17;
+
+    uint32 single_cbet=18;
+    uint32 single_cbet_ip=19;
+    uint32 single_cbet_oop=20;
+    uint32 single_cbet_check_raise=21;
+    uint32 single_cbet_fold_to_raise=22;
+    uint32 single_cbet_call_raise=23;
+    uint32 single_cbet_reraise=24;
+
+    uint32 single_barreling=25;
+    uint32 single_double_barreling=26;
+    uint32 single_tripple_barreling=27;
+
+    uint32 single_fold_to_cbet=28;
+    uint32 single_fold_to_cbet_ip=29;
+    uint32 single_fold_to_cbet_oop=30;
+    uint32 single_call_cbet=31;
+    uint32 single_call_cbet_ip=32;
+    uint32 single_check_call_cbet_oop=33;
+    uint32 single_raise_cbet=34;
+    uint32 single_check_raise_cbet=35;
+    uint32 single_miss_cbet_bet_ip=36;
+    uint32 single_miss_cbet_bet_oop=37;
+    uint32 single_donk=38;
+    uint32 single_call_fold_to_double_barrel=39;
+    uint32 single_call_call_fold_to_tripple_barrel=40;
+
+    uint32 tbet_cbet=41;
+    uint32 tbet_cbet_ip=42;
+    uint32 tbet_cbet_oop=43;
+    uint32 tbet_cbet_check_raise=44;
+    uint32 tbet_cbet_fold_to_raise=45;
+    uint32 tbet_cbet_call_raise=46;
+    uint32 tbet_cbet_reraise=47;
+
+    uint32 tbet_barreling=48;
+    uint32 tbet_double_barreling=49;
+    uint32 tbet_tripple_barreling=50;
+
+    uint32 tbet_fold_to_cbet=51;
+    uint32 tbet_fold_to_cbet_ip=52;
+    uint32 tbet_fold_to_cbet_oop=53;
+    uint32 tbet_call_cbet=54;
+    uint32 tbet_call_cbet_ip=55;
+    uint32 tbet_check_call_cbet_oop=56;
+    uint32 tbet_raise_cbet=57;
+    uint32 tbet_check_raise_cbet=58;
+    uint32 tbet_miss_cbet_bet_ip=59;
+    uint32 tbet_miss_cbet_bet_oop=60;
+    uint32 tbet_donk=61;
+    uint32 tbet_call_fold_to_double_barrel=62;
+    uint32 tbet_call_call_fold_to_tripple_barrel=63;
+
+
+    uint32 bet_turn=64;
+    uint32 bet_turn_over_bet=65;
+    uint32 bet_turn_standard_bet=66;
+    uint32 bet_turn_half_pot=67;
+    uint32 bet_turn_small_pot=68;
+    uint32 raise_turn=69;
+    uint32 raise_turn_bluff=70;
+    uint32 raise_turn_bluff_toppair=71;
+    uint32 bet_river=72;
+    uint32 bet_river_over_bet=73;
+    uint32 bet_river_standard_bet=74;
+    uint32 bet_river_half_pot=75;
+    uint32 bet_river_small_pot=76;
+    uint32 bet_river_value=77;
+    uint32 bet_river_bluff=78;
+    uint32 bet_river_bluff_toppair=79;
+    uint32 raise_river=80;
+    uint32 raise_river_bluff=81;
+    uint32 raise_river_bluff_toppair=82;
+    uint32 call_down_river  = 83;
+}

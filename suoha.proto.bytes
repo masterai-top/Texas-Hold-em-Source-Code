@@ -1,0 +1,144 @@
+syntax = "proto3";
+
+option cc_generic_services=false;
+
+//
+package XGameSHProto;
+
+//协议版本
+enum E_Proto_Version
+{
+    iProtoVersionDefault    = 0;
+    iProtoVersion           = 1021;  //协议版本
+}
+
+//消息号枚举，CS发送和接受为同一消息号
+enum E_msg_ID 
+{
+    MSG_ID_BEGIN = 0;
+
+    SH_msg2cGameBegin_E                     = 201;   //牌局开始
+    SH_msg2cSendCard_E                      = 202;   //发牌
+    SH_msg2sTokenNotify_E                   = 203;   //act通知
+    SH_msg2cTokenBetNotify_E                = 204;   //下注通知(通知其他玩家)
+    SH_msg2csTokenBet_E                     = 205;   //下注请求及应答
+    SH_msg2sGameEnd_E                       = 206;   //游戏结束
+    SH_msg2csGameStation_E                  = 207;   //牌桌快照
+
+    SH_msg2cBuBiNotify_E                    = 208;   //补币通知
+    SH_msg2csBuBi_E                         = 209;   //补币请求反馈
+
+    SH_msg2cReMatchNotify_E                 = 210;   //重新匹配通知
+
+    SH_msg2cDebugCard_E                     = 211;   //配牌
+
+    SH_msg2sCheckBegin_E                    = 212;    //检查开始
+
+    SH_msg2cProfitStatNotify_E              = 213;    //收益统计
+    
+    MSG_ID_END = 300;
+}
+
+//SH_msg2cGameBegin_E
+message SH_msg2cGameBegin
+{
+    map<sint32, sint64> mCidScore = 1; // 开局玩家分数 iChairID : Score
+    map<sint32, sint64> mBaseScore = 2; // 底分 iChairID : Score
+    int32 lPoolScore = 3; //奖池总分
+    int32 iBankerCid = 4; //庄家座位号
+}
+
+message SH_Card
+{
+    int32 iCardType = 1; // 当前牌型
+    repeated int32 vCards= 2; // 
+}
+
+//SH_msg2cSendCard_E
+message SH_msg2cSendCard
+{
+    int32 iGameRound = 1; // 轮数
+    map<int32, SH_Card> mHdCard= 2; //手牌  key : cid
+    int32 lPoolScore = 3; //奖池总分
+}
+
+message SH_msg2sTokenNotify
+{
+    sint32 iCid = 1;
+    sint32 iAct = 2; //可以的操作
+    sint64 lCallScore = 3; // 跟注值， 为0 表示可过牌
+    sint32 iCfgOptionTime = 4; //配置思考时间
+    sint32 iRemainOptionTime = 5; //已用思考时间（）
+}
+
+message SH_msg2csTokenBet
+{
+    int32 iResultID = 1;
+    sint32 iCid = 2;
+    sint32 iAct = 3;
+    sint64 lBetScore = 4;
+    //服务器返回字段
+    sint64 lCidScore = 5; //下注后当前筹码
+}
+
+message SH_msg2sGameEnd
+{
+    map<int32, int64> mWinScore= 1; //结算分数
+    map<int32, SH_Card> mBestCard= 2; //牌
+    bool bCompare= 3; //是否比牌
+}
+
+message SH_sUserInfo
+{
+    sint64 lPlayerID = 1;    //用户ID
+    string sNickName = 2;    //玩家昵称
+    string sHeadStr = 3;     //头像路径
+    sint32 iPlayerGender = 4;  //玩家性别 0-未知 1-男 2-女
+    int64 lCidScore = 5; //当前牌桌筹码
+    SH_Card mHdCard = 6; //手牌
+    int32 iRoundAct = 7;  // 本轮操作
+    int64 lRoundBetScore = 8;// 本轮下注数
+}
+
+message SH_msg2csGameStation
+{
+    int32 iResultID = 1;
+    int32 iGameRound = 2;
+    sint32 iBankerCid = 3;
+    sint32 iTokenCid = 4; //当前下注玩家座位
+    map<sint32, SH_sUserInfo> mUserInfo = 5; //玩家信息
+    sint64 lPoolScore = 6;
+    SH_msg2sTokenNotify sTokenTo = 7;   // 当前玩家下注
+    sint32 mBaseScore = 8; //场次底分
+}
+
+//SH_msg2cBuBiNotify_E 
+message SH_msg2cBuBiNotify
+{
+    int32 iCid = 1;
+}
+
+//SH_msg2csBuBi_E
+message SH_msg2csBuBi
+{
+    int32 iResultID = 1;
+    int32 iCid = 2;
+    sint64 lCidScore = 3; //当前筹码
+}
+
+//SH_msg2cReMatchNotify_E
+message SH_msg2cReMatchNotify
+{
+    int32 iCid = 1;
+    int32 iBetId = 2;       //场次ID
+    int32 iSeatNum = 3;     //座位数
+}
+
+//SH_msg2cProfitStatNotify_E
+message SH_msg2cProfitStatNotify
+{
+    int64 lUid = 1; // 赢家 UID
+    int64 lProfit = 2;// 当前收益统计
+}
+//////////////////////////////////////////
+
