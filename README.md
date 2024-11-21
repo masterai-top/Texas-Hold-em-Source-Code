@@ -1,5 +1,6 @@
 # poker-出售德州游戏代码，德州扑克代码出售
-经典德州竞技联盟模式：德州金币场，经典德州，AOF，各种德州赛事，包括滚轮赛，排名赛，SNG，私人房（可以邀请好友对战），全套源代码出售，有意者请加Telegram联系:@alibaba401
+出售德州游戏全套源代码，客户端+服务器+后台+策划文案+美术资源；在ios商店日流水40万美元；
+经典德州竞技联盟模式：德州金币场，经典德州，AOF，各种德州赛事，包括滚轮赛，排名赛，SNG，私人房（可以邀请好友对战），全套源代码出售，有意者请加Telegram联系:@xuzongbin001
 ![大厅1](https://github.com/user-attachments/assets/5ae9d8a0-945a-47fd-b385-6f0b81a4410a)
 ![大厅01](https://github.com/user-attachments/assets/9e3064e8-1ddf-4578-a212-d6cc94cf24c3)
 
