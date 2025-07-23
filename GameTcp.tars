@@ -1,0 +1,15 @@
+#include "/home/tarsproto/XGame/Comm/JFGame.tars"
+
+/***
+*/
+module XGame
+{
+	interface GameTCP
+	{
+		//tcp请求处理接口
+		int onRequest(long lUin, string sMsgPack, string sCurServrantAddr, JFGame::TClientParam stClientParam, JFGame::UserBaseInfoExt stUserBaseInfo);
+	};
+};
+
+
+

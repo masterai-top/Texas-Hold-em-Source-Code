@@ -1,0 +1,13 @@
+module JFGame
+{
+	interface Push
+	{
+		//推送pb协议数据给客户端
+		int doPushBuf(long uin, string buf);
+		//推送pb协议数据给客户端
+		int doPushUserState(long uin, long cid, int state, string addr, string buf);
+		//推送pb协议数据给客户端(roomid相关)
+		int doPushBufByRoomID(long uin, string buf, string sRoomID, int msgID);
+	};
+};
+
